@@ -18,6 +18,7 @@ class Dir{
 		//Dir();
 		Dir(string name);
 		~Dir();
+		void load(std::ifstream& info);
 		Dir* recurs_find(const vector<string>& dir_names, int count);
 		Dir* find_path();
 		string current_path();
@@ -48,6 +49,7 @@ class Dir{
 		void show();
 		void tree(int level=0);
 		Dir* cd();
+		void save(std::ofstream& info);
 };
 
 class File {

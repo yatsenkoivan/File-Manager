@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\File Manager"
+    "\\File Manager",
+    "\\File Manager\\Debug"
   ],
-  "SelectedNode": "\\File Manager\\Manager.h",
+  "SelectedNode": "\\File Manager\\main.cpp",
   "PreviewInSolutionExplorer": false
 }

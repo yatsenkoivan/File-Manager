@@ -1,19 +1,52 @@
 #include "Manager.h"
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 using std::cin;
 using std::cout;
 using std::endl;
 
 
 //Dir::Dir() : Dir("new") {}
-Dir::Dir(string dir_name) : name{ dir_name }, size{ 0 }, back{ nullptr } {}
+Dir::Dir(string dir_name) : name{ dir_name }, size{ 0 }, back{ nullptr } { }
 Dir::~Dir() {
 	for (auto& i : dirs) {
 		delete i;
 	}
 	for (auto& i : files) {
 		delete i;
+	}
+}
+
+void Dir::load(std::ifstream& info) {
+
+	unsigned int  amount;
+	
+
+	string temp_name;
+	unsigned int temp_size = 0;
+	File* temp_file = nullptr;
+	Dir* temp_dir = nullptr;
+
+	info >> amount;
+	for (size_t i = 0; i < amount; i++) {
+		info >> temp_name >> temp_size;
+		temp_file = new File(temp_name);
+		temp_file->set_size(temp_size);
+		temp_file->set_back(this);
+		files.push_back(temp_file);
+		temp_file = nullptr;
+	}
+
+	info >> amount;
+	for (size_t i = 0; i < amount; i++) {
+		info >> temp_name >> temp_size;
+		temp_dir = new Dir(temp_name);
+		temp_dir->size = temp_size;
+		temp_dir->back = this;
+		dirs.push_back(temp_dir);
+		temp_dir->load(info);
+		temp_dir = nullptr;
 	}
 }
 
@@ -62,7 +95,12 @@ void Dir::command(Dir** current, string cmd, Dir** copied_dir, bool& cut_dir, Fi
 		temp_dir = (*current)->find_path();
 		if (temp_dir) (*current) = temp_dir;
 	}
-
+	if (cmd == "save") {
+		std::ofstream info;
+		info.open("data", std::ios::out);
+		(*current)->save(info);
+		info.close();
+	}
 }
 
 void Dir::help() {
@@ -187,6 +225,7 @@ void Dir::make_dir() {
 	cin >> dir_name;
 	if (!search_dir(dir_name)) {
 		Dir* new_dir = new Dir(dir_name);
+		new_dir->size = 0;
 		new_dir->set_back(this);
 		dirs.push_back(new_dir);
 		new_dir = nullptr;
@@ -394,6 +433,18 @@ void Dir::paste_file(File** copied_file, bool& cut_file) {
 	}
 	else {
 		cout << "No file was copied\n";
+	}
+}
+
+void Dir::save(std::ofstream& info) {
+	info << this->files.size() << endl;
+	for (auto& file : this->files) {
+		info << file->get_name() << "\t" << file->get_size() << endl;
+	}
+	info << this->dirs.size() << endl;
+	for (auto& dir : dirs) {
+		info << dir->name << "\t" << dir->size << endl;
+		dir->save(info);
 	}
 }
 

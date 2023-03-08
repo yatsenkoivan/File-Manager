@@ -1,11 +1,17 @@
 ﻿#include "Manager.h"
 #include <iostream>
+#include <fstream>
 using std::cin;
 using std::cout;
 using std::endl;
 
 int main() {
 	Dir* disk = new Dir("A");
+
+	std::ifstream info;
+	info.open("data", std::ios::in);
+	if (info) disk->load(info);
+
 	Dir* folder = disk;
 
 	Dir* temp_dir = nullptr;
