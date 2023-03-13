@@ -10,7 +10,7 @@ int main() {
 
 	std::ifstream info;
 	info.open("data", std::ios::in);
-	if (info) disk->load(info);
+	if (info.eof() == false) disk->load(info);
 
 	Dir* folder = disk;
 
@@ -25,10 +25,10 @@ int main() {
 
 	cout << "Type \"help\" for more info\n\n";
 
-	while (true) {
+	while (disk) {
 		cout << folder->current_path() << "> ";
 		cin >> cmd;
-		folder->command(&folder, cmd, &copied_dir, cut_dir, &copied_file, cut_file);
+		folder->command(&folder, cmd, &copied_dir, cut_dir, &copied_file, cut_file, &disk);
+		cin.clear();
 	}
-	if (disk) delete disk;
 }

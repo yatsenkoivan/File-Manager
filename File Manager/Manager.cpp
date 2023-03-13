@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <fstream>
+#include <windows.h>
 using std::cin;
 using std::cout;
 using std::endl;
@@ -20,7 +21,7 @@ Dir::~Dir() {
 
 void Dir::load(std::ifstream& info) {
 
-	unsigned int  amount;
+	unsigned int amount;
 	
 
 	string temp_name;
@@ -30,6 +31,7 @@ void Dir::load(std::ifstream& info) {
 
 	info >> amount;
 	for (size_t i = 0; i < amount; i++) {
+		if (info.eof()) return;
 		info >> temp_name >> temp_size;
 		temp_file = new File(temp_name);
 		temp_file->set_size(temp_size);
@@ -40,6 +42,7 @@ void Dir::load(std::ifstream& info) {
 
 	info >> amount;
 	for (size_t i = 0; i < amount; i++) {
+		if (info.eof()) return;
 		info >> temp_name >> temp_size;
 		temp_dir = new Dir(temp_name);
 		temp_dir->size = temp_size;
@@ -50,7 +53,7 @@ void Dir::load(std::ifstream& info) {
 	}
 }
 
-void Dir::command(Dir** current, string cmd, Dir** copied_dir, bool& cut_dir, File** copied_file, bool& cut_file) {
+void Dir::command(Dir** current, string cmd, Dir** copied_dir, bool& cut_dir, File** copied_file, bool& cut_file, Dir** disk) {
 
 	Dir* temp_dir;
 
@@ -98,8 +101,18 @@ void Dir::command(Dir** current, string cmd, Dir** copied_dir, bool& cut_dir, Fi
 	if (cmd == "save") {
 		std::ofstream info;
 		info.open("data", std::ios::out);
-		(*current)->save(info);
+		(* disk)->save(info);
 		info.close();
+	}
+	if (cmd == "color") {
+		(*current)->color();
+	}
+	if (cmd == "colors") {
+		(*current)->colors();
+	}
+	if (cmd == "exit") {
+		delete (*disk);
+		(* disk) = nullptr;
 	}
 }
 
@@ -132,6 +145,11 @@ void Dir::help() {
 	cout << "find\t\t" << "finds directory by path\n";
 	cout << endl;
 	cout << "cls\t\t" << "clears console screen\n";
+	cout << endl;
+	cout << "color\t\t" << "changes the color of text\n";
+	cout << "colors\n" << "shows all color id's\n";
+	cout << endl;
+	cout << "exit\t\t" << "exits the application\n";
 }
 Dir* Dir::recurs_find(const vector<string>& dir_names, int count) {
 	if (dir_names.size() == count) return this;
@@ -446,6 +464,35 @@ void Dir::save(std::ofstream& info) {
 		info << dir->name << "\t" << dir->size << endl;
 		dir->save(info);
 	}
+}
+
+void Dir::color() {
+	int id;
+	cout << "Enter color id: ";
+	cin >> id;
+	cin.clear();
+	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(h, id);
+}
+
+void Dir::colors() {
+	cout <<
+		"black      0\n" <<
+		"dark_blue  1\n" <<
+		"dark_green 2\n" <<
+		"light_blue 3\n" <<
+		"dark_red   4\n" <<
+		"magenta    5\n" <<
+		"orange     6\n" <<
+		"light_gray 7\n" <<
+		"gray       8\n" <<
+		"blue       9\n" <<
+		"green     10\n" <<
+		"cyan      11\n" <<
+		"red       12\n" <<
+		"pink      13\n" <<
+		"yellow    14\n" <<
+		"white     15\n";
 }
 
 

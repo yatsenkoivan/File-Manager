@@ -22,7 +22,7 @@ class Dir{
 		Dir* recurs_find(const vector<string>& dir_names, int count);
 		Dir* find_path();
 		string current_path();
-		void command(Dir** current, string cmd, Dir** copied_dir, bool& cut_dir, File** copied_file, bool& cut_file);
+		void command(Dir** current, string cmd, Dir** copied_dir, bool& cut_dir, File** copied_file, bool& cut_file, Dir** disk);
 		void help();
 		Dir* search_dir();
 		Dir* search_dir(string dir_name);
@@ -50,6 +50,8 @@ class Dir{
 		void tree(int level=0);
 		Dir* cd();
 		void save(std::ofstream& info);
+		void color();
+		void colors();
 };
 
 class File {
